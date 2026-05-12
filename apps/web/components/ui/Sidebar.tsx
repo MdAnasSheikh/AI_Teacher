@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../../hooks/useAuth';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: '🏠' },
@@ -15,6 +16,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   return (
     <aside className="flex flex-col w-64 min-h-screen bg-slate-900 border-r border-slate-700 px-4 py-6 shrink-0">
@@ -46,10 +48,30 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-6 px-3 py-3 rounded-lg bg-slate-800 text-xs text-slate-400">
-        <p className="font-semibold text-slate-300 mb-1">Neural Learning Universe</p>
-        <p>AI-powered education platform</p>
-      </div>
+      {user ? (
+        <div className="mt-6 flex flex-col gap-2">
+          <Link
+            href="/profile"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition"
+          >
+            <div className="w-7 h-7 rounded-full bg-purple-700 flex items-center justify-center text-xs font-bold">
+              {(user.email?.[0] ?? '?').toUpperCase()}
+            </div>
+            <span className="text-xs text-slate-300 truncate max-w-[130px]">{user.email}</span>
+          </Link>
+          <button
+            onClick={logout}
+            className="w-full px-3 py-2 rounded-lg bg-slate-800 hover:bg-red-900/40 text-slate-400 hover:text-red-300 text-xs font-medium transition text-left"
+          >
+            🚪 Sign out
+          </button>
+        </div>
+      ) : (
+        <div className="mt-6 px-3 py-3 rounded-lg bg-slate-800 text-xs text-slate-400">
+          <p className="font-semibold text-slate-300 mb-1">Neural Learning Universe</p>
+          <p>AI-powered education platform</p>
+        </div>
+      )}
     </aside>
   );
 }
